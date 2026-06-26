@@ -1,32 +1,61 @@
 import { LitElement, html, css, svg } from "lit";
 import { customElement, property } from "lit/decorators.js";
 
-// Simplified NZ coastline — equirectangular projection
-// viewBox 0 0 200 280, bounding box: lon 166–179, lat -34–-47
-// x = (lon - 166) * 15.38, y = (|lat| - 34) * 21.54
+// Equirectangular projection — viewBox 0 0 180 280
+// x = (lon - 166) * 13,  y = (|lat| - 34) * 20
 
-// North Island approximate outline
+// North Island — simplified clockwise outline
+// Key landmarks: Cape Reinga (NW), East Cape, Wellington (S), Taranaki (W bulge)
 const NORTH_ISLAND =
-  "M103,11 L111,22 L128,43 L131,28 L153,62 L193,80 L168,123 L136,157 L108,151 L120,114 L133,88 L130,65 Z";
+  "M 87,8 " +       // Cape Reinga
+  "L 111,20 " +     // Whangarei east
+  "L 117,60 " +     // Auckland east
+  "L 126,54 " +     // Coromandel
+  "L 137,76 " +     // Bay of Plenty
+  "L 163,74 " +     // East Cape
+  "L 143,110 " +    // Hawke's Bay
+  "L 121,148 " +    // Cape Palliser (SE tip)
+  "L 114,146 " +    // Wellington
+  "L 116,138 " +    // Kapiti coast
+  "L 117,118 " +    // Whanganui
+  "L 100,106 " +    // Taranaki tip (west bulge)
+  "L 104,90 " +     // North Taranaki
+  "L 111,56 " +     // Auckland west / Manukau
+  "L 91,30 Z";      // West Northland back to Reinga
 
-// South Island approximate outline
+// South Island — simplified clockwise outline
+// Key landmarks: Farewell Spit (NW), Marlborough Sounds (NE), Bluff (S), Fiordland (W)
 const SOUTH_ISLAND =
-  "M103,140 L128,161 L162,211 L103,206 L77,230 L72,247 L37,267 L51,271 L39,215 L46,204 L85,172 L92,161 Z";
+  "M 87,130 " +     // Farewell Spit (NW)
+  "L 96,146 " +     // Nelson
+  "L 104,140 " +    // Marlborough Sounds top
+  "L 103,150 " +    // Blenheim / Wairau
+  "L 100,168 " +    // Kaikoura
+  "L 90,196 " +     // Banks Peninsula / Christchurch
+  "L 65,222 " +     // Oamaru
+  "L 48,244 " +     // Balclutha / Clutha
+  "L 31,252 " +     // Bluff (southernmost)
+  "L 25,242 " +     // Invercargill west
+  "L 22,228 " +     // Fiordland coast
+  "L 25,214 " +     // Milford Sound area
+  "L 34,198 " +     // Jackson Bay / Haast
+  "L 55,188 " +     // Franz Josef
+  "L 68,170 " +     // Greymouth / Hokitika
+  "L 73,156 " +     // Westport
+  "L 79,144 Z";     // Karamea back to Farewell Spit
 
-// Stewart Island approximate (small triangle)
-const STEWART_ISLAND = "M55,271 L65,280 L48,280 Z";
+// Stewart Island — small island south of Bluff
+const STEWART_ISLAND = "M 28,258 L 34,264 L 30,270 L 22,268 L 20,262 Z";
 
 interface ParsedGeometry {
   type: "circle" | "polygon";
-  // circle: [cx, cy, r] in SVG units
   circle?: [number, number, number];
-  // polygon: flat array of [x, y] pairs
   points?: number[][];
 }
 
 function latLonToSvg(lat: number, lon: number): [number, number] {
-  const x = (lon - 166) * 15.38;
-  const y = (Math.abs(lat) - 34) * 21.54;
+  const x = (lon - 166) * 13;
+  const y = (Math.abs(lat) - 34) * 20;
   return [Math.round(x * 10) / 10, Math.round(y * 10) / 10];
 }
 
@@ -38,9 +67,8 @@ function parseGeometry(raw: string): ParsedGeometry | null {
     const lon = parseFloat(circleMatch[2]);
     const radiusKm = parseFloat(circleMatch[3]);
     const [cx, cy] = latLonToSvg(lat, lon);
-    // Rough: 1 degree ≈ 111km; convert radius to SVG units via lat scale
-    const r = (radiusKm / 111) * 21.54;
-    return { type: "circle", circle: [cx, cy, Math.max(r, 3)] };
+    const r = (radiusKm / 111) * 20;
+    return { type: "circle", circle: [cx, cy, Math.max(r, 4)] };
   }
 
   // CAP polygon: "lat1,lon1 lat2,lon2 ..."
@@ -75,11 +103,15 @@ export class NZMinimap extends LitElement {
       padding: 8px 0;
     }
     svg {
-      width: 100px;
+      width: 90px;
       height: 140px;
       overflow: visible;
     }
-    .land { fill: var(--secondary-background-color, #e5e7eb); stroke: var(--divider-color, #9ca3af); stroke-width: 0.5; }
+    .land {
+      fill: var(--secondary-background-color, #e5e7eb);
+      stroke: var(--divider-color, #9ca3af);
+      stroke-width: 0.8;
+    }
     .alert-area { stroke-width: 1.5; }
   `;
 
@@ -105,7 +137,7 @@ export class NZMinimap extends LitElement {
 
     return html`
       <div class="map-wrap">
-        <svg viewBox="0 0 200 290" xmlns="http://www.w3.org/2000/svg">
+        <svg viewBox="0 0 180 280" xmlns="http://www.w3.org/2000/svg">
           <path class="land" d=${NORTH_ISLAND} />
           <path class="land" d=${SOUTH_ISLAND} />
           <path class="land" d=${STEWART_ISLAND} />

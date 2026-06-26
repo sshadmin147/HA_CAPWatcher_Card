@@ -66,6 +66,12 @@ export class AlertDetail extends LitElement {
     .source-link:hover { text-decoration: underline; }
   `;
 
+  private _clean(text: string | null | undefined): string {
+    if (!text) return "";
+    // CAP XML often has leading tabs on each line — strip them
+    return text.split("\n").map(l => l.trimStart()).join("\n").trim();
+  }
+
   render() {
     const a = this.alert.attributes;
 
@@ -107,13 +113,13 @@ export class AlertDetail extends LitElement {
         </div>
 
         ${a.description ? html`
-          <div class="description">${a.description}</div>
+          <div class="description">${this._clean(a.description)}</div>
         ` : ""}
 
         ${a.instructions ? html`
           <div class="instructions">
             <div class="instructions-label">Instructions</div>
-            ${a.instructions}
+            ${this._clean(a.instructions)}
           </div>
         ` : ""}
 
