@@ -889,7 +889,7 @@ let D = class extends g {
         ${t.instructions ? c`
           <div class="instructions">
             <div class="instructions-label">Instructions</div>
-            ${this._clean(t.instructions)}
+            <div class="instructions-text">${this._clean(t.instructions)}</div>
           </div>
         ` : ""}
 
@@ -946,7 +946,6 @@ D.styles = S`
       background: var(--secondary-background-color, #f3f4f6);
       border-left: 3px solid var(--primary-color, #1d4ed8);
       border-radius: 0 4px 4px 0;
-      white-space: pre-wrap;
       font-size: 13px;
     }
     .instructions-label {
@@ -956,6 +955,9 @@ D.styles = S`
       text-transform: uppercase;
       letter-spacing: 0.04em;
       color: var(--secondary-text-color, #6b7280);
+    }
+    .instructions-text {
+      white-space: pre-wrap;
     }
     .source-link {
       display: inline-block;

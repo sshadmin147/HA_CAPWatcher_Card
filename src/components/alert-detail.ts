@@ -45,7 +45,6 @@ export class AlertDetail extends LitElement {
       background: var(--secondary-background-color, #f3f4f6);
       border-left: 3px solid var(--primary-color, #1d4ed8);
       border-radius: 0 4px 4px 0;
-      white-space: pre-wrap;
       font-size: 13px;
     }
     .instructions-label {
@@ -55,6 +54,9 @@ export class AlertDetail extends LitElement {
       text-transform: uppercase;
       letter-spacing: 0.04em;
       color: var(--secondary-text-color, #6b7280);
+    }
+    .instructions-text {
+      white-space: pre-wrap;
     }
     .source-link {
       display: inline-block;
@@ -119,7 +121,7 @@ export class AlertDetail extends LitElement {
         ${a.instructions ? html`
           <div class="instructions">
             <div class="instructions-label">Instructions</div>
-            ${this._clean(a.instructions)}
+            <div class="instructions-text">${this._clean(a.instructions)}</div>
           </div>
         ` : ""}
 
