@@ -941,6 +941,9 @@ D.styles = S`
       font-size: 13px;
     }
     .instructions {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
       margin: 8px 0;
       padding: 8px 10px;
       background: var(--secondary-background-color, #f3f4f6);
