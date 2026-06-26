@@ -22,8 +22,16 @@ export class AlertRow extends LitElement {
       border-radius: 6px;
       margin-bottom: 8px;
       overflow: hidden;
-      border: 1px solid transparent;
-      transition: border-color 0.2s;
+      border: 1px solid var(--_sev-border);
+      /* light mode: subtle tint over the card background */
+      background: var(--_sev-bg-light);
+      transition: border-color 0.2s, background 0.2s;
+    }
+    @media (prefers-color-scheme: dark) {
+      .row {
+        /* dark mode: stronger tint so it reads against a dark card */
+        background: var(--_sev-bg-dark);
+      }
     }
     .row.dismissed {
       opacity: 0.45;
@@ -39,6 +47,9 @@ export class AlertRow extends LitElement {
     }
     .row-header:hover {
       filter: brightness(0.97);
+    }
+    @media (prefers-color-scheme: dark) {
+      .row-header:hover { filter: brightness(1.06); }
     }
     .severity-stripe {
       width: 4px;
@@ -66,6 +77,7 @@ export class AlertRow extends LitElement {
       display: flex;
       gap: 8px;
       flex-wrap: wrap;
+      align-items: center;
     }
     .row-actions {
       display: flex;
@@ -85,8 +97,8 @@ export class AlertRow extends LitElement {
       align-items: center;
     }
     .ack-btn {
-      background: none;
-      border: 1px solid var(--divider-color, #d1d5db);
+      background: transparent;
+      border: 1px solid var(--divider-color, #9ca3af);
       border-radius: 4px;
       cursor: pointer;
       padding: 3px 8px;
@@ -99,7 +111,9 @@ export class AlertRow extends LitElement {
       color: var(--primary-color, #1d4ed8);
     }
     .ack-btn.active {
-      background: var(--secondary-background-color, #f3f4f6);
+      background: var(--_sev-bg-dark);
+      color: var(--primary-text-color, #111827);
+      border-color: var(--_sev-border);
     }
     .detail-wrap {
       border-top: 1px solid var(--divider-color, #e5e7eb);
@@ -137,10 +151,14 @@ export class AlertRow extends LitElement {
     const a = this.alert.attributes;
     const style = getSeverityStyle(this.alert.state);
     const issuedStr = a.issued ? formatTimestamp(a.issued) : null;
+    // Hex-alpha tints: transparent so they work over any background (light or dark)
+    const bgLight = style.color + "14"; // ~8% opacity
+    const bgDark  = style.color + "28"; // ~16% opacity
+    const border  = style.color + "55"; // ~33% opacity
 
     return html`
       <div class="row ${this._dismissed ? "dismissed" : ""}"
-           style="background:${a.severity_background ?? "var(--card-background-color, #fff)"}; border-color:${style.color}22">
+           style="--_sev-bg-light:${bgLight}; --_sev-bg-dark:${bgDark}; --_sev-border:${border}">
         <div class="row-header" @click=${this._toggleExpand}>
           <div class="severity-stripe" style="background:${style.color}"></div>
           <div class="header-content">
