@@ -1,0 +1,20 @@
+{
+  "name": "lovelace-ha-capwatcher",
+  "version": "0.1.0",
+  "description": "Lovelace card for HA-CAPWatcher NZ — NZ-CAP colour-coded weather and civil defence alerts",
+  "keywords": ["home-assistant", "lovelace", "hacs", "cap", "new-zealand", "weather"],
+  "license": "MIT",
+  "main": "dist/ha-capwatcher-card.js",
+  "type": "module",
+  "scripts": {
+    "build": "vite build",
+    "dev": "vite build --watch"
+  },
+  "dependencies": {
+    "lit": "^3.2.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.0",
+    "vite": "^5.3.0"
+  }
+}
